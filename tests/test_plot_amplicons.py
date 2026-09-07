@@ -119,6 +119,10 @@ def test_figure_size_supports_width_and_height_to_width_ratio() -> None:
 def test_cycle_layout_keeps_closing_edges_and_tall_figures_compact() -> None:
     assert plot_amplicons.get_cycle_x_padding(False, 1.5) == 4.5
     assert plot_amplicons.get_cycle_x_padding(True, 1.5) == 0.0
+    assert plot_amplicons.CYCLE_GENE_TRACK_BASE_HEIGHT_INCHES == 0.8
+    assert plot_amplicons.CYCLE_GENE_TRACK_HEIGHT_PER_LANE_INCHES == 0.4
+    assert plot_amplicons.CYCLE_GENE_TRACK_MAX_HEIGHT_INCHES == 3.0
+    assert plot_amplicons.CYCLE_GENE_TRACK_MAX_FIGURE_FRACTION == 0.45
 
     sparse_ratio = plot_amplicons.get_cycle_gene_track_ratio(24.0, 1, False)
     crowded_ratio = plot_amplicons.get_cycle_gene_track_ratio(
@@ -240,6 +244,28 @@ def test_cycle_colors_are_assigned_by_walk_type(
         3: plot_amplicons.CYCLE_COLOR,
     }
     assert plot_amplicons.CYCLE_COLOR == "#5F78B5"
+
+
+def test_default_cycle_plot_style_matches_publication_figures() -> None:
+    style = plot_amplicons.DEFAULT_CYCLE_PLOT_STYLE
+
+    assert style == plot_amplicons.CyclePlotStyle(
+        segment_line_width=1.8,
+        connection_line_width=1.5,
+        cycle_color="#5F78B5",
+        path_color="#D55E00",
+        segment_face_color="#F2D2A2",
+        segment_edge_color="#3F3F3F",
+    )
+    assert plot_amplicons.CYCLE_SEGMENT_LINE_WIDTH == style.segment_line_width
+    assert (
+        plot_amplicons.CYCLE_CONNECTION_LINE_WIDTH
+        == style.connection_line_width
+    )
+    assert plot_amplicons.CYCLE_COLOR == style.cycle_color
+    assert plot_amplicons.PATH_COLOR == style.path_color
+    assert plot_amplicons.CYCLE_SEGMENT_FACE_COLOR == style.segment_face_color
+    assert plot_amplicons.CYCLE_SEGMENT_EDGE_COLOR == style.segment_edge_color
 
 
 def test_cycle_axis_labels_use_regular_heading_and_larger_cn() -> None:

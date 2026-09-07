@@ -379,6 +379,11 @@ coral plot --ref hg38 \
 All cycles share the cycle color and all paths share the path color shown in
 the generated legend.
 
+The default cycle style uses thin muted-blue SV edges for cycles, orange SV
+edges for paths, and higher-contrast amber genomic segments with dark outlines.
+The gene-annotation section grows with the number of occupied label lanes and
+is capped to avoid adding unnecessary whitespace to sparse or tall figures.
+
 CoRAL writes `_graph.png/.pdf`, `_cycles.png/.pdf`, and a separate graph
 legend. With `--combined`, it additionally writes `_combined.png/.pdf`.
 

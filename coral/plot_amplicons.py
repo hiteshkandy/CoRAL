@@ -55,6 +55,19 @@ rcParams["pdf.fonttype"] = 42
 
 logger = logging.getLogger(__name__)
 
+
+@dataclass(frozen=True)
+class CyclePlotStyle:
+    """Visual defaults shared by standalone and combined cycle plots."""
+
+    segment_line_width: float
+    connection_line_width: float
+    cycle_color: str
+    path_color: str
+    segment_face_color: str
+    segment_edge_color: str
+
+
 DISCORDANT_EDGE_COLORS = {
     "+-": "red",
     "++": "magenta",
@@ -79,16 +92,28 @@ DEFAULT_CYCLE_WIDTH = 12.0
 DEFAULT_INTERVAL_OFFSET = 0.10
 DEFAULT_MIN_COORD_WIDTH = 0.0
 DEFAULT_MIN_INTERVAL_DISPLAY_WIDTH = 0.005
-CYCLE_SEGMENT_LINE_WIDTH = 1.8
-CYCLE_CONNECTION_LINE_WIDTH = 1.5
-CYCLE_COLOR = "#5F78B5"
-PATH_COLOR = "#D55E00"
-CYCLE_SEGMENT_FACE_COLOR = "#F2D2A2"
-CYCLE_SEGMENT_EDGE_COLOR = "#3F3F3F"
+DEFAULT_CYCLE_PLOT_STYLE = CyclePlotStyle(
+    segment_line_width=1.8,
+    connection_line_width=1.5,
+    cycle_color="#5F78B5",
+    path_color="#D55E00",
+    segment_face_color="#F2D2A2",
+    segment_edge_color="#3F3F3F",
+)
+CYCLE_SEGMENT_LINE_WIDTH = DEFAULT_CYCLE_PLOT_STYLE.segment_line_width
+CYCLE_CONNECTION_LINE_WIDTH = DEFAULT_CYCLE_PLOT_STYLE.connection_line_width
+CYCLE_COLOR = DEFAULT_CYCLE_PLOT_STYLE.cycle_color
+PATH_COLOR = DEFAULT_CYCLE_PLOT_STYLE.path_color
+CYCLE_SEGMENT_FACE_COLOR = DEFAULT_CYCLE_PLOT_STYLE.segment_face_color
+CYCLE_SEGMENT_EDGE_COLOR = DEFAULT_CYCLE_PLOT_STYLE.segment_edge_color
 COMBINED_AXIS_LEFT = 0.23
 COMBINED_AXIS_RIGHT = 0.88
 PLOT_DATA_HEIGHT_RATIO = 8.0
 GENE_TRACK_HEIGHT_RATIO = 3.0
+CYCLE_GENE_TRACK_BASE_HEIGHT_INCHES = 0.8
+CYCLE_GENE_TRACK_HEIGHT_PER_LANE_INCHES = 0.4
+CYCLE_GENE_TRACK_MAX_HEIGHT_INCHES = 3.0
+CYCLE_GENE_TRACK_MAX_FIGURE_FRACTION = 0.45
 GRAPH_MAIN_AXIS_BOTTOM_WITH_GENES = 0.30 + (0.88 - 0.30) * (
     GENE_TRACK_HEIGHT_RATIO / (PLOT_DATA_HEIGHT_RATIO + GENE_TRACK_HEIGHT_RATIO)
 )
@@ -301,12 +326,13 @@ def get_cycle_gene_track_ratio(
     if align_to_combined:
         return GENE_TRACK_HEIGHT_RATIO
     desired_gene_height_inches = min(
-        3.0,
-        0.8 + 0.4 * max(0, gene_lane_count),
+        CYCLE_GENE_TRACK_MAX_HEIGHT_INCHES,
+        CYCLE_GENE_TRACK_BASE_HEIGHT_INCHES
+        + CYCLE_GENE_TRACK_HEIGHT_PER_LANE_INCHES * max(0, gene_lane_count),
     )
     desired_gene_height_inches = min(
         desired_gene_height_inches,
-        resolved_height * 0.45,
+        resolved_height * CYCLE_GENE_TRACK_MAX_FIGURE_FRACTION,
     )
     return (
         PLOT_DATA_HEIGHT_RATIO
